@@ -91,6 +91,7 @@ jobs:
       - aws-cli/setup
       - eb/setup
       - run: "cat ~/.aws/config"
+      - run: "cat ~/.aws/credentials"
       - run:
           name: "Elastic beanstalk Deploy"
           command: |
