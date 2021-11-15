@@ -72,29 +72,29 @@ jobs:
           arguments: "--acl public-read --delete"
           from: "udagram-frontend/www"
           to: <<parameters.bucket>>
-  deploy_backend:
-    docker:
-      - image: "cimg/base:stable"
-    parameters:
-      app-name:
-        type: string
-        default: "udagram"
-      env-name:
-        type: string
-        default: "udagram-dev"
-      region-name:
-        type: string
-        default: "eu-central-1"
-    steps:
-      - attach_workspace:
-          at: .
-      - eb/setup
-      - run:
-          name: "Elastic beanstalk Deploy"
-          command: |
-            eb init <<parameters.app-name>> --region <<parameters.region-name>> --platform node.js
-            eb deploy <<parameters.env-name>>
-          working_directory: "udagram-api/www"
+deploy_backend:
+  docker:
+    - image: "cimg/python:3.7"
+  parameters:
+    app-name:
+      type: string
+      default: "udagram-api"
+    env-name:
+      type: string
+      default: "udagram-api-dev"
+    region-name:
+      type: string
+      default: "eu-central-1"
+  steps:
+    - attach_workspace:
+        at: .
+    - eb/setup
+    - run:
+        name: "Elastic beanstalk Deploy"
+        command: |
+          eb init <<parameters.app-name>> --region <<parameters.region-name>> --platform node.js
+          eb deploy <<parameters.env-name>>
+        working_directory: "udagram-api/www"
         
     
 workflows:
