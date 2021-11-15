@@ -63,7 +63,6 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      #- run: 
   deploy_frontend:
     docker:
       - image: "cimg/base:stable"
@@ -72,9 +71,7 @@ jobs:
       - attach_workspace:
           at: .
       - s3/sync:
-          arguments: |
-            --acl public-read
-            --delete
+          arguments: "--acl public-read --delete"
           from: "udagram-frontend/www"
           to: "s3://9951-udagram/"
         
