@@ -14,16 +14,16 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - node-v1-api-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - node-v1-api-{{ .Branch }}-
-            - node-v1-api-
+            - node_modules-api-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - node_modules-api-{{ .Branch }}-
+            - node_modules-api-
       - run: 
           name: 'Install Dependencies'
           command: "cd udagram-api && npm install --save"
       - save_cache:
           paths:
             - udagram-api/node_modules 
-          key: node-v1-api-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: node_modules-api-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:
           name: "Build API"
           command: "cd udagram-api && npm run build"
@@ -38,16 +38,16 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - node-v1-front-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - node-v1-front-{{ .Branch }}-
-            - node-v1-front-
+            - node_modules-front-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - node_modules-front-{{ .Branch }}-
+            - node_modules-front-
       - run: 
           name: 'Install Dependencies'
           command: "cd udagram-frontend && npm install --save"
       - save_cache:
           paths:
             - udagram-frontend/node_modules 
-          key: node-v1-front-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: node_modules-front-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:
           name: "Build Frontend"
           command: |
@@ -57,15 +57,13 @@ jobs:
           root: .
           paths:
             - 'udagram-frontend/www'
-  deploy_backend:
-    docker:
-      - image: "cimg/base:stable"
-    steps:
-      - attach_workspace:
-          at: .
   deploy_frontend:
     docker:
       - image: "cimg/base:stable"
+    parameters:
+      bucket:
+        type: string
+        default: BUCKET
     steps:
       - aws-cli/setup
       - attach_workspace:
@@ -73,17 +71,23 @@ jobs:
       - s3/sync:
           arguments: "--acl public-read --delete"
           from: "udagram-frontend/www"
-          to: "s3://9951-udagram/"
+          to: "s3://<parameters.bucket>/"
         
     
 workflows:
-  build_deploy:
+  frontend:
     jobs:
       - build_frontend
-      - build_backend
-      - deploy_backend:
-          requires:
-            - build_backend
       - deploy_frontend:
+          bucket: "9951-udagram"
           requires:
             - build_frontend
+  backend:
+    jobs:
+      - build_backend
+      - eb/deploy:
+          requires:
+            - build_backend
+          app-dir: "udagram-api/www"
+          application-name: "udagram-api"
+          environment-name: "udagram-api-dev"
