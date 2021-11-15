@@ -90,17 +90,12 @@ jobs:
           at: .
       - aws-cli/setup
       - eb/setup
-      - run: "cat ~/.aws/config"
-      - run: "cat ~/.aws/credentials"
-      - run:
-          name: "Elastic beanstalk Initialize"
-          command: |
-            eb init <<parameters.app-name>> --region <<parameters.region-name>> --platform node.js --profile default
-          working_directory: "udagram-api/www"
       - run:
           name: "Elastic beanstalk Deploy"
           command: |
+            eb init <<parameters.app-name>> --region <<parameters.region-name>> --platform node.js --profile default
             eb deploy <<parameters.env-name>>
+            eb status
           working_directory: "udagram-api/www"
           
 
