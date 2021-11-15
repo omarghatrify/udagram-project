@@ -21,7 +21,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - 'www'
+            - 'udagram-api/www'
   build_frontend:
     docker:
       - image: "cimg/node:lts"
@@ -35,10 +35,15 @@ jobs:
           command: |
             cd udagram-frontend
             npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - 'udagram-frontend/www'
   deploy_backend:
     docker:
       - image: "cimg/base:stable"
     steps:
+      - run: "ls"
       - attach_workspace:
           at: .
       - run: "ls"
