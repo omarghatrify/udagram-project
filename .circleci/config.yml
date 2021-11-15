@@ -13,24 +13,43 @@ jobs:
     steps:
       - checkout
       - node/install
-      - aws-cli/setup
-      - eb/setup
+      #- aws-cli/setup
+      #- eb/setup
+      - run: "ls"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '*'
+      - run: "ls"
+    
   build_backend:
     docker:
       - image: "cimg/base:stable"
     steps:
-      - checkout
+      - run: "ls"
+      - attach_workspace:
+            at: .
+      - run: "ls"
       - run: 
           name: 'Install Dependencies'
           command: "cd udagram-api && npm install --save"
       - run:
           name: "Build API"
           command: "cd udagram-api && npm run build"
+      - run: "ls"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - 'www'
+      - run: "ls"
   build_frontend:
     docker:
       - image: "cimg/base:stable"
     steps:
-      - checkout
+      - run: "ls"
+      - attach_workspace:
+            at: .
+      - run: "ls"
       - run: 
           name: 'Install Dependencies'
           command: "cd udagram-frontend && npm install --save"
@@ -39,6 +58,7 @@ jobs:
           command: |
             cd udagram-frontend
             npm run build
+      - run: "ls"
 
 workflows:
   build_deploy:
