@@ -27,10 +27,15 @@ jobs:
       - run:
           name: "Build API"
           command: "cd udagram-api && npm run build"
-      - persist_to_workspace:
-          root: .
-          paths:
-            - 'udagram-api/www'
+      - eb/deploy:
+          context: aws-creds
+          application-name: udagram-api
+          environment-name: udagram-api-dev
+          app-dir: udagram-api/www
+      # - persist_to_workspace:
+      #     root: .
+      #     paths:
+      #       - 'udagram-api/www'
   build_frontend:
     docker:
       - image: "cimg/node:lts"
@@ -74,7 +79,7 @@ jobs:
           to: <<parameters.bucket>>
   deploy_backend:
     docker:
-      - image: "cimg/python:3.7"
+      - image: "cimg/base:stable"
     parameters:
       app-name:
         type: string
@@ -88,7 +93,6 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - aws-cli/setup
       - eb/setup
       - run:
           name: "Elastic beanstalk Deploy"
@@ -109,9 +113,9 @@ workflows:
   backend:
     jobs:
       - build_backend
-      - deploy_backend:
-          requires:
-            - build_backend
-          app-name: "udagram-api"
-          env-name: "udagram-api-dev"
-          region-name: "eu-central-1"
+      # - deploy_backend:
+      #     requires:
+      #       - build_backend
+      #     app-name: "udagram-api"
+      #     env-name: "udagram-api-dev"
+      #     region-name: "eu-central-1"
