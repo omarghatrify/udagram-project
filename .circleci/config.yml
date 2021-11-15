@@ -63,13 +63,28 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: "ls udagram-api/www"
+      #- run: 
+  deploy_frontend:
+    docker:
+      - image: "cimg/base:stable"
+    steps:
+      - aws-cli/setup
+      - s3/sync:
+        arguments: |
+          --acl public-read
+          --delete
+        from: "udagram-frontend/www"
+        to: "s3://9951-udagram/"
+      
     
 workflows:
   build_deploy:
     jobs:
       - build_frontend
       - build_backend
-      - deploy_backend:
+      # - deploy_backend:
+      #     requires:
+      #       - build_backend
+      - deploy_frontend:
           requires:
-            - build_backend
+            - build_frontend
