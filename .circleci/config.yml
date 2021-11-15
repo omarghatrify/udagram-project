@@ -12,9 +12,18 @@ jobs:
       - image: "cimg/node:lts"
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - node-v1-api-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - node-v1-api-{{ .Branch }}-
+            - node-v1-api-
       - run: 
           name: 'Install Dependencies'
           command: "cd udagram-api && npm install --save"
+      - save_cache:
+          paths:
+            - ~/usr/local/lib/node_modules 
+          key: node-v1-api-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:
           name: "Build API"
           command: "cd udagram-api && npm run build"
@@ -27,9 +36,18 @@ jobs:
       - image: "cimg/node:lts"
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - node-v1-front-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - node-v1-front-{{ .Branch }}-
+            - node-v1-front-
       - run: 
           name: 'Install Dependencies'
           command: "cd udagram-frontend && npm install --save"
+      - save_cache:
+          paths:
+            - ~/usr/local/lib/node_modules 
+          key: node-v1-front-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:
           name: "Build Frontend"
           command: |
@@ -43,10 +61,9 @@ jobs:
     docker:
       - image: "cimg/base:stable"
     steps:
-      - run: "ls"
       - attach_workspace:
           at: .
-      - run: "ls"
+      - run: "ls udagram-api/www"
     
 workflows:
   build_deploy:
