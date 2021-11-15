@@ -69,6 +69,8 @@ jobs:
       - image: "cimg/base:stable"
     steps:
       - aws-cli/setup
+      - attach_workspace:
+          at: .
       - s3/sync:
           arguments: |
             --acl public-read
