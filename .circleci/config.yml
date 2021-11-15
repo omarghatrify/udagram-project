@@ -92,7 +92,7 @@ jobs:
       - run:
           name: "Elastic beanstalk Deploy"
           command: |
-            eb init <<parameters.app-name>> -r <<parameters.region-name>>
+            eb init <<parameters.app-name>> --region <<parameters.region-name>> --platform node.js
             eb deploy <<parameters.env-name>>
           working_directory: "udagram-api/www"
         
