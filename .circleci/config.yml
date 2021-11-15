@@ -22,7 +22,7 @@ jobs:
           command: "cd udagram-api && npm install --save"
       - save_cache:
           paths:
-            - ~/usr/local/lib/node_modules 
+            - udagram-api/node_modules 
           key: node-v1-api-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:
           name: "Build API"
@@ -46,13 +46,13 @@ jobs:
           command: "cd udagram-frontend && npm install --save"
       - save_cache:
           paths:
-            - ~/usr/local/lib/node_modules 
+            - udagram-frontend/node_modules 
           key: node-v1-front-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:
           name: "Build Frontend"
           command: |
             cd udagram-frontend
-            ng build -- prod
+            ng build --prod
       - persist_to_workspace:
           root: .
           paths:
