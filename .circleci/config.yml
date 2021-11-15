@@ -88,7 +88,6 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - aws-cli/setup
       - eb/setup
       - run:
           name: "Elastic beanstalk Deploy"
