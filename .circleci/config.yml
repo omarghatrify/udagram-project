@@ -19,6 +19,7 @@ jobs:
     docker:
       - image: "cimg/base:stable"
     steps:
+      - checkout
       - run: 
           name: 'Install Dependencies'
           command: "cd udagram-api && npm install --save"
@@ -29,6 +30,7 @@ jobs:
     docker:
       - image: "cimg/base:stable"
     steps:
+      - checkout
       - run: 
           name: 'Install Dependencies'
           command: "cd udagram-frontend && npm install --save"
