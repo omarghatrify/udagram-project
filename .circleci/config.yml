@@ -52,7 +52,7 @@ jobs:
           name: "Build Frontend"
           command: |
             cd udagram-frontend
-            npm run build
+            ng build -- prod
       - persist_to_workspace:
           root: .
           paths:
