@@ -7,49 +7,26 @@ orbs:
   eb: circleci/aws-elastic-beanstalk@2.0.1
 
 jobs:
-  setup_node:
-    docker:
-      - image: "cimg/base:stable"
-    steps:
-      - checkout
-      - node/install
-      #- aws-cli/setup
-      #- eb/setup
-      - run: "ls"
-      - persist_to_workspace:
-          root: .
-          paths:
-            - '*'
-      - run: "ls"
-    
   build_backend:
     docker:
-      - image: "cimg/base:stable"
+      - image: "cimg/node:lts"
     steps:
-      - run: "ls"
-      - attach_workspace:
-            at: .
-      - run: "ls"
+      - checkout
       - run: 
           name: 'Install Dependencies'
           command: "cd udagram-api && npm install --save"
       - run:
           name: "Build API"
           command: "cd udagram-api && npm run build"
-      - run: "ls"
       - persist_to_workspace:
           root: .
           paths:
             - 'www'
-      - run: "ls"
   build_frontend:
     docker:
-      - image: "cimg/base:stable"
+      - image: "cimg/node:lts"
     steps:
-      - run: "ls"
-      - attach_workspace:
-            at: .
-      - run: "ls"
+      - checkout
       - run: 
           name: 'Install Dependencies'
           command: "cd udagram-frontend && npm install --save"
@@ -58,15 +35,19 @@ jobs:
           command: |
             cd udagram-frontend
             npm run build
+  deploy_backend:
+    docker:
+      - image: "cimg/base:stable"
+    steps:
+      - attach_workspace:
+          at: .
       - run: "ls"
-
+    
 workflows:
   build_deploy:
     jobs:
-      - setup_node
-      - build_frontend:
+      - build_frontend
+      - build_backend
+      - deploy_backend:
           requires:
-            - setup_node
-      - build_backend:
-          requires:
-            - setup_node
+            - build_backend
