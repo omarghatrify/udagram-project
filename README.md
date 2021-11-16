@@ -12,6 +12,7 @@ Working webapp at: [S3 Bucket Public-Read Static Website](http://9951-udagram.s3
 [![omarghatrify](https://circleci.com/gh/omarghatrify/udagram-project.svg?style=svg&circle-token=8f52098b6fd1a7bccbad6fb3700a9f30ada0af5c)](https://app.circleci.com/pipelines/github/omarghatrify/udagram-project)
 
 ![Circleci screenshot](./screenshots/CircleCi.png)
+![Circleci env variables](./screenshots/Circleci-Env.png)
 
 ### Elastic Beanstalk:
 ![Elastic Beanstalk screenshot](./screenshots/Running%20EB%20App.png)
