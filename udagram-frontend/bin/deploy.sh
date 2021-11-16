@@ -1,3 +1,6 @@
 set -e
 BUCKET_NAME="9951-udagram"
-aws s3 cp --recursive --acl public-read ./www s3://$BUCKET_NAME/
+if [ -n "$1" ]; then
+  BUCKET_NAME=$1
+fi
+aws s3 sync --acl public-read ./www s3://$BUCKET_NAME/

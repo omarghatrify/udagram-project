@@ -1,9 +1,9 @@
 set -e
 
 if test -f ".env"; then
-    set -o allexport
-    source .env
-    set +o allexport
+  set -o allexport
+  source .env
+  set +o allexport
 fi
 
 if [ -n "$1" ]; then
@@ -14,6 +14,7 @@ else
   else
     echo "deploy.sh [app_name] [env_name]"
     echo "app_name is missing."
+    exit 1
   fi
 fi
 
@@ -21,10 +22,11 @@ if [ -n "$2" ]; then
   env_name=$2
 else
   if [ -n "$EB_ENV_NAME" ]; then
-      app_name=$EB_ENV_NAME
+      env_name=$EB_ENV_NAME
   else
     echo "deploy.sh [app_name] [env_name]"
     echo "env_name is missing."
+    exit 1
   fi
 fi
 

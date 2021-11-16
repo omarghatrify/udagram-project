@@ -10,7 +10,9 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "deploy":"chmod +x ./bin/deploy.sh &&sh ./bin/deploy.sh"
+    "deploy:prod": "chmod +x ./bin/deploy.sh && ./bin/deploy.sh",
+    "deploy:dev": "chmod +x ./bin/deploy.sh && ./bin/deploy.sh DEV_BUCKET"
+    
   },
   "private": true,
   "dependencies": {
