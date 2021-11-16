@@ -1,5 +1,7 @@
 # Circleci Pipeline
 
+![Pipeline Diagram](pipeline.drawio.png)
+
 ## Setup
 
 1. Edit the `config.yml` file in `.circleci` directory change the `bucket`, `app-name`, `env-name`, `region_name`.  
