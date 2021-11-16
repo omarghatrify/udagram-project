@@ -126,6 +126,6 @@ workflows:
           app-name: "udagram-api" # EB app
           env-name: "udagram-api-dev" # EB app env
           region-name: "eu-central-1" # AWS region
-        filters:
+          filters:
             branches:
               only: master
