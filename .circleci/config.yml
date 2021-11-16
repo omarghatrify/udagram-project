@@ -90,10 +90,18 @@ jobs:
           at: .
       - aws-cli/setup # Configure AWS
       - eb/setup # EB CLI setup
+      - run:
+          name: "Initialize"
+          command: "eb init <<parameters.app-name>> --region <<parameters.region-name>> --platform node.js --profile default"
+          working_directory: "udagram-api/www"
+      - run:
+          name: "Update Enviroment Variables"
+          command: |
+            eb setenv POSTGRES_HOST=$POSTGRES_HOST POSTGRES_PORT=$POSTGRES_PORT POSTGRES_DB=$POSTGRES_DB POSTGRES_USERNAME=$POSTGRES_USERNAME POSTGRES_PASSWORD=$POSTGRES_PASSWORD AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION AWS_BUCKET=$AWS_BUCKET JWT_SECRET=$JWT_SECRET
+          working_directory: "udagram-api/www"
       - run: # Deploy to EB. --profile default argument to use AWS Credentials
           name: "Elastic beanstalk Deploy"
           command: |
-            eb init <<parameters.app-name>> --region <<parameters.region-name>> --platform node.js --profile default
             eb deploy <<parameters.env-name>>
             eb status
           working_directory: "udagram-api/www"
