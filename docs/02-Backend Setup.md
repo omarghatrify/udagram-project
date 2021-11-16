@@ -1,13 +1,26 @@
 # Udagran API
 
-## Elastic Beans Setup (EB CLI)
+## Elastic Beanstalk Setup
 1. Build using `npm run build`
-2. Initiate Elastic beanstalk application using `eb init`
-3. Add `deploy: artifact: www/Archive.zip` to `.elasticbeanstalk/config.yml`
-4. Create a new enviroment using
-   ```
-   eb create --envvars "POSTGRES_DB=database, POSTGRES_HOST=host, POSTGRES_USERNAME=username, POSTGRES_PASSWORD=password, JWT_SECRET=secret"
-   ```
+2. Create .env file to include your enviroment variables below:
+   ```Go
+   POSTGRES_HOST=POSTGRES_HOST
+   POSTGRES_PORT=POSTGRES_PORT
+   POSTGRES_DB=POSTGRES_DB
+   POSTGRES_USERNAME=POSTGRES_USERNAME
+   POSTGRES_PASSWORD=POSTGRES_PASSWORD
 
-## Elastic Beans Deploy
-- Deploy using `npm run deploy`
+   JWT_SECRET=JWT_SECRET
+
+   AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID
+   AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
+   AWS_DEFAULT_REGION=AWS_DEFAULT_REGION
+   AWS_BUCKET=AWS_BUCKET
+
+   EB_APP_NAME=EB_APP_NAME
+   EB_ENV_NAME=EB_ENV_NAME
+   ```
+3. Run `chmod +x ./bin/setup.sh && sh ./bin/setup.sh` to create youe EB enviroment. Parameters: `setup.sh [aws_profile: optional]`
+
+## Elastic Beanstalk Deploy To Existing Env
+- Deploy using `npm run deploy` Parameters: `setup.sh [aws_profile (optional), default: default]`
