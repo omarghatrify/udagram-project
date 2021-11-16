@@ -1,33 +1,33 @@
 version: 2.1
 
-orbs:
-  node: circleci/node@4.1.0
-  aws-cli: circleci/aws-cli@2.0.3
-  s3: circleci/aws-s3@3.0.0
-  eb: circleci/aws-elastic-beanstalk@2.0.1
+orbs: # Orbs used in the pipeline
+  node: circleci/node@4.1.0 # For npm install, build scripts etc..
+  aws-cli: circleci/aws-cli@2.0.3 # Configures AWS to be used by both S3 and EB
+  s3: circleci/aws-s3@3.0.0 # To deploy frontend to S3 Bucket
+  eb: circleci/aws-elastic-beanstalk@2.0.1 # To deploy backend to EB
 
 jobs:
   build_backend:
     docker:
       - image: "cimg/node:lts"
     steps:
-      - checkout
-      - restore_cache:
+      - checkout 
+      - restore_cache: # restore cached node_modules
           keys:
             - node_modules-api-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - node_modules-api-{{ .Branch }}-
             - node_modules-api-
-      - run: 
+      - run:
           name: 'Install Dependencies'
           command: "cd udagram-api && npm install --save"
-      - save_cache:
+      - save_cache: # cache node_modules
           paths:
             - udagram-api/node_modules 
           key: node_modules-api-{{ .Branch }}-{{ checksum "package-lock.json" }}
-      - run:
+      - run: # Build the project
           name: "Build API"
           command: "cd udagram-api && npm run build"
-      - persist_to_workspace:
+      - persist_to_workspace: # keeping the www directory for the next job (deployment) 
           root: .
           paths:
             - 'udagram-api/www'
@@ -36,7 +36,7 @@ jobs:
       - image: "cimg/node:lts"
     steps:
       - checkout
-      - restore_cache:
+      - restore_cache: # restore cached node_modules
           keys:
             - node_modules-front-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - node_modules-front-{{ .Branch }}-
@@ -44,16 +44,16 @@ jobs:
       - run: 
           name: 'Install Dependencies'
           command: "cd udagram-frontend && npm install --save"
-      - save_cache:
+      - save_cache: # cache node_modules
           paths:
             - udagram-frontend/node_modules 
           key: node_modules-front-{{ .Branch }}-{{ checksum "package-lock.json" }}
-      - run:
+      - run: # Build the project
           name: "Build Frontend"
           command: |
             cd udagram-frontend
             npx ng build --prod
-      - persist_to_workspace:
+      - persist_to_workspace: # keeping the www directory for the next job (deployment) 
           root: .
           paths:
             - 'udagram-frontend/www'
@@ -61,14 +61,14 @@ jobs:
     docker:
       - image: "cimg/base:stable"
     parameters:
-      bucket:
+      bucket: # Taking a bucket name parameter
         type: string
-        default: "BUCKET"
+        default: ""
     steps:
-      - aws-cli/setup
-      - attach_workspace:
+      - aws-cli/setup # Configure AWS
+      - attach_workspace: # Retreive the persisting www folder
           at: .
-      - s3/sync:
+      - s3/sync: # Upload new changes to S3 bucket
           arguments: "--acl public-read"
           from: "udagram-frontend/www"
           to: <<parameters.bucket>>
@@ -76,21 +76,21 @@ jobs:
     docker:
       - image: "cimg/python:3.7"
     parameters:
-      app-name:
+      app-name: # EB app name parameter
         type: string
-        default: "udagram-api"
-      env-name:
+        default: ""
+      env-name: # EB env name parameter
         type: string
-        default: "udagram-api-dev"
-      region-name:
+        default: ""
+      region-name: # AWS region parameter
         type: string
-        default: "eu-central-1"
+        default: ""
     steps:
-      - attach_workspace:
+      - attach_workspace: # Retreive the persisting www folder
           at: .
-      - aws-cli/setup
-      - eb/setup
-      - run:
+      - aws-cli/setup # Configure AWS
+      - eb/setup # EB CLI setup
+      - run: # Deploy to EB. --profile default argument to use AWS Credentials
           name: "Elastic beanstalk Deploy"
           command: |
             eb init <<parameters.app-name>> --region <<parameters.region-name>> --platform node.js --profile default
@@ -98,21 +98,20 @@ jobs:
             eb status
           working_directory: "udagram-api/www"
           
-
 workflows:
   frontend:
     jobs:
       - build_frontend
       - deploy_frontend:
-          bucket: "s3://9951-udagram/"
-          requires:
-            - build_frontend
+          bucket: "s3://9951-udagram/" # S3 bucket
+          requires: 
+            - build_frontend # Waits for build job to complete
   backend:
     jobs:
       - build_backend
       - deploy_backend:
           requires:
-            - build_backend
-          app-name: "udagram-api"
-          env-name: "udagram-api-dev"
-          region-name: "eu-central-1"
+            - build_backend # Waits for build job to complete
+          app-name: "udagram-api" # EB app
+          env-name: "udagram-api-dev" # EB app env
+          region-name: "eu-central-1" # AWS region
