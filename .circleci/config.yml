@@ -114,6 +114,9 @@ workflows:
           bucket: "s3://9951-udagram/" # S3 bucket
           requires: 
             - build_frontend # Waits for build job to complete
+          filters:
+            branches:
+              only: master
   backend:
     jobs:
       - build_backend
@@ -123,3 +126,6 @@ workflows:
           app-name: "udagram-api" # EB app
           env-name: "udagram-api-dev" # EB app env
           region-name: "eu-central-1" # AWS region
+        filters:
+            branches:
+              only: master
