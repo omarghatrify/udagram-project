@@ -5,18 +5,21 @@ This application is provided to you as an alternative starter project if you do 
 Working webapp at: [S3 Public Read Bucket](http://9951-udagram.s3-website.eu-central-1.amazonaws.com/)
 ![Web app screenshot](./screenshots/frontend.png)
 
-## Infrastructure Screenshots
+## Infrastructure
 
-Pipline:
+![Diagram](./docs/diagram.drawio.png)
+### Pipline:  
+[![omarghatrify](https://circleci.com/gh/omarghatrify/udagram-project.svg?style=svg&circle-token=8f52098b6fd1a7bccbad6fb3700a9f30ada0af5c)](https://app.circleci.com/pipelines/github/omarghatrify/udagram-project)
+
 ![Circleci screenshot](./screenshots/CircleCi.png)
 
-Elastic Beanstalk:
+### Elastic Beanstalk:
 ![Elastic Beanstalk screenshot](./screenshots/Running%20EB%20App.png)
 
-AWS RDB - Postgres:
+### AWS RDB - Postgres:
 ![RDB screenshot](./screenshots/Running%20RDB.png)
 
-S3 Bucket:  
+### S3 Bucket:  
 ![S3 screenshot](./screenshots/S3-Bucket.png)
 
 
@@ -38,6 +41,8 @@ The project can run but is missing some information to connect to the database a
 - npm 6.14.8 (LTS) or more recent, Yarn can work but was not tested for this project
 
 - AWS CLI v2, v1 can work but was not tested for this project
+
+- Elastic Beanstalk CLI
 
 - A RDS database running Postgres.
 
