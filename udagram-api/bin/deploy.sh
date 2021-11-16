@@ -6,17 +6,30 @@ if test -f ".env"; then
     set +o allexport
 fi
 
-error_msg="is required."
-if [ -z "$EB_APP_NAME" ]; then
-    echo "EB_APP_NAME $error_msg"
-    exit 1
+if [ -n "$1" ]; then
+  app_name=$1
+else
+  if [ -n "$EB_APP_NAME" ]; then
+      app_name=$EB_APP_NAME
+  else
+    echo "deploy.sh [app_name] [env_name]"
+    echo "app_name is missing."
+  fi
 fi
-if [ -z "$EB_ENV_NAME" ]; then
-    echo "EB_ENV_NAME $error_msg"
-    exit 1
+
+if [ -n "$2" ]; then
+  env_name=$2
+else
+  if [ -n "$EB_ENV_NAME" ]; then
+      app_name=$EB_ENV_NAME
+  else
+    echo "deploy.sh [app_name] [env_name]"
+    echo "env_name is missing."
+  fi
 fi
+
 if [ -z "$AWS_DEFAULT_REGION" ]; then
-    echo "AWS_DEFAULT_REGION $error_msg"
+    echo "AWS_DEFAULT_REGION env var is missing."
     exit 1
 fi
 
@@ -27,5 +40,5 @@ else
 fi
 
 cd www
-eb init $EB_APP_NAME --region $AWS_DEFAULT_REGION --platform node.js --profile $aws_profile
-eb deploy $EB_ENV_NAME
+eb init $app_name --platform node.js --region $AWS_DEFAULT_REGION
+eb deploy $env_name
